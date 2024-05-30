@@ -27,7 +27,7 @@ export default function RootLayout({
           enableSystem={true}
         >
           {children}
-          <Toaster />
+          <Toaster richColors />
         </ThemeProvider>
         <footer className="px-2 md:px-9 bottom-0 bg-primary flex items-center justify-between">
           <p>@ 2024</p>

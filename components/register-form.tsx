@@ -19,8 +19,14 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { register } from "@/server-actions/register";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 const RegisterForm = () => {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
@@ -30,7 +36,23 @@ const RegisterForm = () => {
   });
 
   const onFormSubmit = (values: z.infer<typeof RegisterFormSchema>) => {
-    register(values);
+    setError("");
+    setSuccess("");
+    startTransition(() => {
+      register(values).then((data) => {
+        console.log(data);
+        setError(data.err);
+        setSuccess(data.success);
+
+        if (data.success) {
+          toast.success(data.success, { duration: 5000, dismissible: true });
+        }
+
+        if (data.err) {
+          toast.error(data.err, { duration: 5000, dismissible: true });
+        }
+      });
+    });
   };
 
   return (
