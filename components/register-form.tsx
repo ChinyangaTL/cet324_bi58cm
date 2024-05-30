@@ -22,6 +22,7 @@ import { register } from "@/server-actions/register";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
+import { FormError } from "./form-error";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -79,6 +80,7 @@ const RegisterForm = () => {
             </Button>
           </p>
         </div>
+        <FormError message={error} />
         <div className="flex flex-col gap-3">
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
@@ -152,7 +154,7 @@ const RegisterForm = () => {
                 type="submit"
               >
                 {isPending ? (
-                  <PulseLoader color="white" size="5" />
+                  <PulseLoader color="white" size="5px" />
                 ) : (
                   "Register"
                 )}
