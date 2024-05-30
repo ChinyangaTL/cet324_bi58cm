@@ -64,6 +64,7 @@ export const RegisterFormSchema = z
       checkPassComplexity.addIssue({
         code: "custom",
         path: ["password"],
+        // @ts-ignore
         message: errObj,
       });
     }
