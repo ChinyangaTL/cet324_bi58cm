@@ -6,6 +6,7 @@ export const RegisterFormSchema = z
     password: z.string(),
   })
   .superRefine(({ password }, checkPassComplexity) => {
+    const isAtLeastEightLetters = (password: string) => password.length >= 8;
     const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
     const containsLowercase = (ch: string) => /[a-z]/.test(ch);
     const containsSpecialChar = (ch: string) =>
@@ -26,17 +27,24 @@ export const RegisterFormSchema = z
     let errObj = {
       upperCase: {
         pass: true,
-        message: "Must contain at least one uppercase letter",
+        message: "Password must contain at least one uppercase letter",
       },
       lowerCase: {
         pass: true,
-        message: "Must contain at least one lowercase letter",
+        message: "Password must contain at least one lowercase letter",
       },
       specialCh: {
         pass: true,
-        message: "Must contain at least one special character",
+        message: "Password must contain at least one special character",
       },
-      totalNumber: { pass: true, message: "Must contain at least one number" },
+      totalNumber: {
+        pass: true,
+        message: "Password must contain at least one number",
+      },
+      length: {
+        pass: isAtLeastEightLetters(password),
+        message: "Password must be at least 8 characters long",
+      },
     };
 
     if (countOfLowerCase < 1) {
@@ -69,21 +77,3 @@ export const RegisterFormSchema = z
       });
     }
   });
-
-//   {form.formState.errors.password?.message && (
-//     <ul className="mt-2 text-sm text-red-400">
-//       {Object.keys(form.formState.errors.password?.message).map(
-//         (m, i) => {
-//           const { pass, message } =
-//             form.formState.errors.password?.message[m];
-
-//           return (
-//             <li key={i}>
-//               <span>{pass ? "✅" : "❌"}</span>
-//               <span>{message}</span>
-//             </li>
-//           );
-//         }
-//       )}
-//     </ul>
-//   )}
