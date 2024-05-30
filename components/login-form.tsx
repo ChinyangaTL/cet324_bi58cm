@@ -23,6 +23,7 @@ import { login } from "@/server-actions/login";
 import { FormSuccess } from "./form-success";
 import { FormError } from "./form-error";
 import { toast } from "sonner";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -99,6 +100,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="Email Address"
                           type="email"
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -115,6 +117,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="Password"
                           type="password"
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -122,11 +125,15 @@ const LoginForm = () => {
                   )}
                 />
               </div>
-              <Button className="w-full rounded-full" type="submit">
-                Login
+              <Button
+                disabled={isPending}
+                className="w-full rounded-full"
+                type="submit"
+              >
+                {isPending ? <PulseLoader color="white" size="5px" /> : "Login"}
               </Button>
             </form>
-            <Button variant="link" className="self-center">
+            <Button disabled={isPending} variant="link" className="self-center">
               Forgot your password?
             </Button>
           </Form>
@@ -143,6 +150,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGoogle />
             <p>Sign in with google</p>
@@ -150,6 +158,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGithub />
             <p>Sign in with github</p>
@@ -157,6 +166,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaEnvelope />
             <p>Get a one time login code</p>
