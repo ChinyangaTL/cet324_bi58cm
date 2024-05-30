@@ -82,6 +82,7 @@ const RegisterForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGoogle />
             <p>Sign in with google</p>
@@ -89,6 +90,7 @@ const RegisterForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGithub />
             <p>Sign in with github</p>
@@ -114,6 +116,7 @@ const RegisterForm = () => {
                     <FormItem>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
                           {...field}
                           placeholder="Email Address"
@@ -130,6 +133,7 @@ const RegisterForm = () => {
                     <FormItem>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
                           {...field}
                           placeholder="Password"
@@ -141,7 +145,11 @@ const RegisterForm = () => {
                   )}
                 />
               </div>
-              <Button className="w-full rounded-full" type="submit">
+              <Button
+                disabled={isPending}
+                className="w-full rounded-full"
+                type="submit"
+              >
                 Register
               </Button>
             </form>
