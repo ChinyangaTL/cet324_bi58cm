@@ -41,7 +41,7 @@ const LoginForm = () => {
         <div className="text-center my-7">
           <h2 className="text-2xl">Login</h2>
           <div className="flex items-center justify-center px-0 mx-0">
-            <p className="text-sm">Don't have an account?</p>
+            <p className="text-sm">Do not have an account?</p>
             <Button className="text-sm  text-primary" variant="link">
               <Link
                 href="/auth/login"

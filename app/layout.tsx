@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ModeToggle } from "@/components/theme-toggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,10 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <footer className="px-2 md:px-9 bottom-0 bg-primary flex items-center justify-between">
+          <p>@ 2024</p>
+          <ModeToggle />
+        </footer>
       </body>
     </html>
   );
