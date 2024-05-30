@@ -23,6 +23,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
 import { FormError } from "./form-error";
+import { FormSuccess } from "./form-success";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -80,6 +81,7 @@ const RegisterForm = () => {
             </Button>
           </p>
         </div>
+        <FormSuccess message={success} />
         <FormError message={error} />
         <div className="flex flex-col gap-3">
           <Button
