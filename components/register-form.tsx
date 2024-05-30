@@ -5,7 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
-import { FaGithub, FaGoogle, FaSpinner } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaGithub,
+  FaGoogle,
+  FaSpinner,
+} from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { RegisterFormSchema } from "@/form-schemas";
@@ -24,6 +30,7 @@ import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
+import { cn } from "@/lib/utils";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -145,7 +152,6 @@ const RegisterForm = () => {
                           type="password"
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -162,6 +168,41 @@ const RegisterForm = () => {
                 )}
               </Button>
             </form>
+            <div className="flex justify-center mt-3 ">
+              {form.formState.errors.password?.message && (
+                <ul className="mt-2 text-sm">
+                  {Object.keys(form.formState.errors.password?.message).map(
+                    (m, i) => {
+                      const { pass, message } =
+                        // @ts-ignore
+                        form.formState.errors.password?.message[m];
+
+                      return (
+                        <li key={i} className="flex items-center gap-2">
+                          <span>
+                            {pass ? (
+                              <FaCheckCircle color="#10b981" />
+                            ) : (
+                              <FaExclamationCircle color="#dc2626" />
+                            )}
+                          </span>
+                          <span>
+                            <p
+                              className={cn(
+                                pass && "text-emerald-500",
+                                !pass && "text-[#dc2626]"
+                              )}
+                            >
+                              {message}
+                            </p>
+                          </span>
+                        </li>
+                      );
+                    }
+                  )}
+                </ul>
+              )}
+            </div>
           </Form>
         </div>
       </CardContent>
