@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { FaEnvelope, FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { RegisterFormSchema } from "@/form-schemas";
+import { LoginFormSchema } from "@/form-schemas";
 import {
   Form,
   FormControl,
@@ -20,15 +20,15 @@ import {
 import { Input } from "./ui/input";
 
 const LoginForm = () => {
-  const form = useForm<z.infer<typeof RegisterFormSchema>>({
-    resolver: zodResolver(RegisterFormSchema),
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onFormSubmit = (values: z.infer<typeof RegisterFormSchema>) => {
+  const onFormSubmit = (values: z.infer<typeof LoginFormSchema>) => {
     console.log({ values });
   };
 
