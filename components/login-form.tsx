@@ -18,8 +18,16 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { useState, useTransition } from "react";
+import { login } from "@/server-actions/login";
+import { FormSuccess } from "./form-success";
+import { FormError } from "./form-error";
+import { toast } from "sonner";
 
 const LoginForm = () => {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -29,7 +37,23 @@ const LoginForm = () => {
   });
 
   const onFormSubmit = (values: z.infer<typeof LoginFormSchema>) => {
-    console.log({ values });
+    setError("");
+    setSuccess("");
+    startTransition(() => {
+      login(values).then((data) => {
+        console.log(data);
+        setError(data?.err);
+        setSuccess(data?.success);
+
+        if (data?.err) {
+          toast.error(data?.err, { duration: 5000, dismissible: true });
+        }
+
+        if (data?.success) {
+          toast.success(data?.success, { duration: 5000, dismissible: true });
+        }
+      });
+    });
   };
 
   return (
@@ -55,6 +79,8 @@ const LoginForm = () => {
             </Button>
           </div>
         </div>
+        <FormSuccess message={success} />
+        <FormError message={error} />
 
         <div className="mb-6 flex flex-col">
           <Form {...form}>
