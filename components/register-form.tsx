@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { RegisterFormSchema } from "@/form-schemas";
@@ -21,6 +21,7 @@ import { Input } from "./ui/input";
 import { register } from "@/server-actions/register";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -150,7 +151,11 @@ const RegisterForm = () => {
                 className="w-full rounded-full"
                 type="submit"
               >
-                Register
+                {isPending ? (
+                  <PulseLoader color="white" size="5" />
+                ) : (
+                  "Register"
+                )}
               </Button>
             </form>
           </Form>
