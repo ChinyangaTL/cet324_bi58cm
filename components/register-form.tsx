@@ -8,6 +8,7 @@ import { Button, buttonVariants } from "./ui/button";
 import {
   FaCheckCircle,
   FaExclamationCircle,
+  FaEye,
   FaGithub,
   FaGoogle,
   FaSpinner,
@@ -31,11 +32,13 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
@@ -149,7 +152,16 @@ const RegisterForm = () => {
                           className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
                           {...field}
                           placeholder="Password"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
+                          suffix={
+                            <Button
+                              variant="ghost"
+                              className="hover:bg-transparent"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <EyeOff /> : <Eye />}
+                            </Button>
+                          }
                         />
                       </FormControl>
                     </FormItem>
