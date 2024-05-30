@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { register } from "@/server-actions/register";
 
 const RegisterForm = () => {
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
@@ -29,7 +30,7 @@ const RegisterForm = () => {
   });
 
   const onFormSubmit = (values: z.infer<typeof RegisterFormSchema>) => {
-    console.log({ values });
+    register(values);
   };
 
   return (
