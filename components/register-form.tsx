@@ -8,22 +8,13 @@ import { Button, buttonVariants } from "./ui/button";
 import {
   FaCheckCircle,
   FaExclamationCircle,
-  FaEye,
   FaGithub,
   FaGoogle,
-  FaSpinner,
 } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { RegisterFormSchema } from "@/form-schemas";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { register } from "@/server-actions/register";
 import { useState, useTransition } from "react";
