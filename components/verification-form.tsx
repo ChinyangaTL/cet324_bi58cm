@@ -38,13 +38,15 @@ const VerificationForm = () => {
   }, [onSubmit]);
   return (
     <div className="flex items-center w-full justify-center">
-      <Card>
+      <Card className="text-center">
         <CardHeader>Verifying Your Email</CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col items-center w-full justify-center">
           {!success && !error && <BeatLoader color="white" />}
 
-          <FormSuccess message={success} />
-          <FormError message={error} />
+          <div className="w-full">
+            <FormSuccess message={success} />
+            <FormError message={error} />
+          </div>
 
           {success && (
             <Link
