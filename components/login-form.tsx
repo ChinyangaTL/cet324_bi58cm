@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { FaEnvelope, FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { RegisterFormSchema } from "@/form-schemas";
+import { LoginFormSchema } from "@/form-schemas";
 import {
   Form,
   FormControl,
@@ -18,18 +18,43 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { useState, useTransition } from "react";
+import { login } from "@/server-actions/login";
+import { FormSuccess } from "./form-success";
+import { FormError } from "./form-error";
+import { toast } from "sonner";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const LoginForm = () => {
-  const form = useForm<z.infer<typeof RegisterFormSchema>>({
-    resolver: zodResolver(RegisterFormSchema),
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onFormSubmit = (values: z.infer<typeof RegisterFormSchema>) => {
-    console.log({ values });
+  const onFormSubmit = (values: z.infer<typeof LoginFormSchema>) => {
+    setError("");
+    setSuccess("");
+    startTransition(() => {
+      login(values).then((data) => {
+        console.log(data);
+        setError(data?.err);
+        setSuccess(data?.success);
+
+        if (data?.err) {
+          toast.error(data?.err, { duration: 5000, dismissible: true });
+        }
+
+        if (data?.success) {
+          toast.success(data?.success, { duration: 5000, dismissible: true });
+        }
+      });
+    });
   };
 
   return (
@@ -55,6 +80,8 @@ const LoginForm = () => {
             </Button>
           </div>
         </div>
+        <FormSuccess message={success} />
+        <FormError message={error} />
 
         <div className="mb-6 flex flex-col">
           <Form {...form}>
@@ -73,6 +100,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="Email Address"
                           type="email"
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -89,6 +117,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="Password"
                           type="password"
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -96,11 +125,15 @@ const LoginForm = () => {
                   )}
                 />
               </div>
-              <Button className="w-full rounded-full" type="submit">
-                Login
+              <Button
+                disabled={isPending}
+                className="w-full rounded-full"
+                type="submit"
+              >
+                {isPending ? <PulseLoader color="white" size="5px" /> : "Login"}
               </Button>
             </form>
-            <Button variant="link" className="self-center">
+            <Button disabled={isPending} variant="link" className="self-center">
               Forgot your password?
             </Button>
           </Form>
@@ -117,6 +150,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGoogle />
             <p>Sign in with google</p>
@@ -124,6 +158,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGithub />
             <p>Sign in with github</p>
@@ -131,6 +166,7 @@ const LoginForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaEnvelope />
             <p>Get a one time login code</p>

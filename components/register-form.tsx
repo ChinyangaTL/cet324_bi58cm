@@ -5,21 +5,32 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaGithub,
+  FaGoogle,
+} from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { RegisterFormSchema } from "@/form-schemas";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
+import { register } from "@/server-actions/register";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import PulseLoader from "react-spinners/PulseLoader";
+import { FormError } from "./form-error";
+import { FormSuccess } from "./form-success";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm = () => {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
@@ -29,7 +40,23 @@ const RegisterForm = () => {
   });
 
   const onFormSubmit = (values: z.infer<typeof RegisterFormSchema>) => {
-    console.log({ values });
+    setError("");
+    setSuccess("");
+    startTransition(() => {
+      register(values).then((data) => {
+        console.log(data);
+        setError(data.err);
+        setSuccess(data.success);
+
+        if (data.success) {
+          toast.success(data.success, { duration: 5000, dismissible: true });
+        }
+
+        if (data.err) {
+          toast.error(data.err, { duration: 5000, dismissible: true });
+        }
+      });
+    });
   };
 
   return (
@@ -55,10 +82,13 @@ const RegisterForm = () => {
             </Button>
           </p>
         </div>
+        <FormSuccess message={success} />
+        <FormError message={error} />
         <div className="flex flex-col gap-3">
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGoogle />
             <p>Sign in with google</p>
@@ -66,6 +96,7 @@ const RegisterForm = () => {
           <Button
             className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
             variant="outline"
+            disabled={isPending}
           >
             <FaGithub />
             <p>Sign in with github</p>
@@ -91,6 +122,7 @@ const RegisterForm = () => {
                     <FormItem>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
                           {...field}
                           placeholder="Email Address"
@@ -107,21 +139,73 @@ const RegisterForm = () => {
                     <FormItem>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
                           {...field}
                           placeholder="Password"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
+                          suffix={
+                            <Button
+                              variant="ghost"
+                              className="hover:bg-transparent"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <EyeOff /> : <Eye />}
+                            </Button>
+                          }
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button className="w-full rounded-full" type="submit">
-                Register
+              <Button
+                disabled={isPending}
+                className="w-full rounded-full"
+                type="submit"
+              >
+                {isPending ? (
+                  <PulseLoader color="white" size="5px" />
+                ) : (
+                  "Register"
+                )}
               </Button>
             </form>
+            <div className="flex justify-center mt-3 ">
+              {form.formState.errors.password?.message && (
+                <ul className="mt-2 text-sm">
+                  {Object.keys(form.formState.errors.password?.message).map(
+                    (m, i) => {
+                      const { pass, message } =
+                        // @ts-ignore
+                        form.formState.errors.password?.message[m];
+
+                      return (
+                        <li key={i} className="flex items-center gap-2">
+                          <span>
+                            {pass ? (
+                              <FaCheckCircle color="#10b981" />
+                            ) : (
+                              <FaExclamationCircle color="#dc2626" />
+                            )}
+                          </span>
+                          <span>
+                            <p
+                              className={cn(
+                                pass && "text-emerald-500",
+                                !pass && "text-[#dc2626]"
+                              )}
+                            >
+                              {message}
+                            </p>
+                          </span>
+                        </li>
+                      );
+                    }
+                  )}
+                </ul>
+              )}
+            </div>
           </Form>
         </div>
       </CardContent>
