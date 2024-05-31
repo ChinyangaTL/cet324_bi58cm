@@ -5,18 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
-import { FaEnvelope, FaGithub, FaGoogle } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { LoginFormSchema } from "@/form-schemas";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { useState, useTransition } from "react";
 import { login } from "@/server-actions/login";
@@ -24,6 +16,7 @@ import { FormSuccess } from "./form-success";
 import { FormError } from "./form-error";
 import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
+import OauthButtons from "./oauth-buttons";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -146,32 +139,7 @@ const LoginForm = () => {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <Button
-            className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
-            variant="outline"
-            disabled={isPending}
-          >
-            <FaGoogle />
-            <p>Sign in with google</p>
-          </Button>
-          <Button
-            className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
-            variant="outline"
-            disabled={isPending}
-          >
-            <FaGithub />
-            <p>Sign in with github</p>
-          </Button>
-          <Button
-            className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
-            variant="outline"
-            disabled={isPending}
-          >
-            <FaEnvelope />
-            <p>Get a one time login code</p>
-          </Button>
-        </div>
+        {<OauthButtons isPending={isPending} />}
       </CardContent>
     </Card>
   );
