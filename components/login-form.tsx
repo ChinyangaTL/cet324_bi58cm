@@ -10,7 +10,7 @@ import { Separator } from "./ui/separator";
 import { LoginFormSchema } from "@/form-schemas";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
-import { useState, useTransition } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { login } from "@/server-actions/login";
 import { FormSuccess } from "./form-success";
 import { FormError } from "./form-error";
@@ -57,97 +57,107 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="min-w-[350px] w-[450px]">
-      <CardHeader className="flex items-center justify-center">
-        Cyber Locket
-      </CardHeader>
-      <CardContent>
-        <div className="text-center my-7">
-          <h2 className="text-2xl">Login</h2>
-          <div className="flex items-center justify-center px-0 mx-0">
-            <p className="text-sm">Do not have an account?</p>
-            <Button className="text-sm  text-primary" variant="link">
-              <Link
-                href="/auth/login"
-                className={buttonVariants({
-                  variant: "link",
-                  className: "px-0 mx-0",
-                })}
-              >
-                <p className="text-sm font-semibold">Sign up</p>
-              </Link>
-            </Button>
+    <Suspense>
+      <Card className="min-w-[350px] w-[450px]">
+        <CardHeader className="flex items-center justify-center">
+          Cyber Locket
+        </CardHeader>
+        <CardContent>
+          <div className="text-center my-7">
+            <h2 className="text-2xl">Login</h2>
+            <div className="flex items-center justify-center px-0 mx-0">
+              <p className="text-sm">Do not have an account?</p>
+              <Button className="text-sm  text-primary" variant="link">
+                <Link
+                  href="/auth/login"
+                  className={buttonVariants({
+                    variant: "link",
+                    className: "px-0 mx-0",
+                  })}
+                >
+                  <p className="text-sm font-semibold">Sign up</p>
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-        <FormSuccess message={success} />
-        <FormError message={error || urlError} />
+          <FormSuccess message={success} />
+          <FormError message={error || urlError} />
 
-        <div className="mb-6 flex flex-col">
-          <Form {...form}>
-            <form
-              className="space-y-4"
-              onSubmit={form.handleSubmit(onFormSubmit)}
-            >
-              <div className="space-y-4">
-                <FormField
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
-                          {...field}
-                          placeholder="Email Address"
-                          type="email"
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+          <div className="mb-6 flex flex-col">
+            <Form {...form}>
+              <form
+                className="space-y-4"
+                onSubmit={form.handleSubmit(onFormSubmit)}
+              >
+                <div className="space-y-4">
+                  <FormField
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
+                            {...field}
+                            placeholder="Email Address"
+                            type="email"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
+                            {...field}
+                            placeholder="Password"
+                            type="password"
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button
+                  disabled={isPending}
+                  className="w-full rounded-full"
+                  type="submit"
+                >
+                  {isPending ? (
+                    <PulseLoader color="white" size="5px" />
+                  ) : (
+                    "Login"
                   )}
-                />
-                <FormField
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
-                          {...field}
-                          placeholder="Password"
-                          type="password"
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                </Button>
+              </form>
               <Button
                 disabled={isPending}
-                className="w-full rounded-full"
-                type="submit"
+                variant="link"
+                className="self-center"
               >
-                {isPending ? <PulseLoader color="white" size="5px" /> : "Login"}
+                Forgot your password?
               </Button>
-            </form>
-            <Button disabled={isPending} variant="link" className="self-center">
-              Forgot your password?
-            </Button>
-          </Form>
-        </div>
-        <div className="flex relative my-6">
-          <Separator className="border-t flex-1 border-grey-dark absolute left-0 right-0 top-1/2" />
+            </Form>
+          </div>
+          <div className="flex relative my-6">
+            <Separator className="border-t flex-1 border-grey-dark absolute left-0 right-0 top-1/2" />
 
-          <p className="text-small leading-normal relative text-center text-color-secondary px-3 mx-auto bg-black">
-            Or
-          </p>
-        </div>
+            <p className="text-small leading-normal relative text-center text-color-secondary px-3 mx-auto bg-black">
+              Or
+            </p>
+          </div>
 
-        {<OauthButtons isPending={isPending} />}
-      </CardContent>
-    </Card>
+          {<OauthButtons isPending={isPending} />}
+        </CardContent>
+      </Card>
+    </Suspense>
   );
 };
 
