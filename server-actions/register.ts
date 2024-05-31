@@ -17,9 +17,9 @@ export const register = async (values: z.infer<typeof RegisterFormSchema>) => {
 
   const { email, password } = validatedFields.data;
 
-  if (isCommonPassword(password)) {
-    return { err: "Password is too common" };
-  }
+  // if (isCommonPassword(password)) {
+  //   return { err: "Password is too common" };
+  // }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
