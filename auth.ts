@@ -3,6 +3,7 @@ import authConfig from "./auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./lib/db";
 import { getUserById } from "./lib/user";
+import { getTwoFactorConfirmationByUserId } from "./lib/two-factor-confirmation";
 
 export const {
   auth,
@@ -31,6 +32,21 @@ export const {
       const existingUser = await getUserById(user.id!); // block sign in without email verifcation
 
       if (!existingUser?.emailVerified) return false;
+
+      if (existingUser?.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+
+        if (!twoFactorConfirmation) return false;
+
+        // Delete two factor confirmation for next sign in
+        await db.twoFactorConfirmation.delete({
+          where: {
+            id: twoFactorConfirmation.id,
+          },
+        });
+      }
 
       return true;
     },
