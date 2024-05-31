@@ -7,6 +7,7 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { getUserByEmail } from "@/lib/user";
 import { generateVerficationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const login = async (values: z.infer<typeof LoginFormSchema>) => {
   const validatedFields = LoginFormSchema.safeParse(values);
@@ -25,6 +26,11 @@ export const login = async (values: z.infer<typeof LoginFormSchema>) => {
   if (!existingUser.emailVerified) {
     const verificationToken = await generateVerficationToken(
       existingUser.email
+    );
+
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
     );
 
     return {
