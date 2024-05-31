@@ -81,6 +81,7 @@ export const RegisterFormSchema = z
 export const LoginFormSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, { message: "Password cannot be empty" }),
+  code: z.optional(z.string()),
 });
 
 export const ResetPasswordFormSchema = z.object({

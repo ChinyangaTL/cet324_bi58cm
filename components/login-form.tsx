@@ -8,7 +8,14 @@ import { Button, buttonVariants } from "./ui/button";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { LoginFormSchema } from "@/form-schemas";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import { Input } from "./ui/input";
 import { useState, useTransition } from "react";
 import { login } from "@/server-actions/login";
@@ -25,6 +32,7 @@ const LoginForm = () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
 
   const searchParams = useSearchParams();
   const urlError =
@@ -36,6 +44,7 @@ const LoginForm = () => {
     defaultValues: {
       email: "",
       password: "",
+      code: "",
     },
   });
 
@@ -43,19 +52,30 @@ const LoginForm = () => {
     setError("");
     setSuccess("");
     startTransition(() => {
-      login(values).then((data) => {
-        console.log(data);
-        setError(data?.err);
-        setSuccess(data?.success);
+      login(values)
+        .then((data) => {
+          console.log(data);
+          setError(data?.err);
+          setSuccess(data?.success);
 
-        if (data?.err) {
-          toast.error(data?.err, { duration: 5000, dismissible: true });
-        }
+          if (data?.err) {
+            toast.error(data?.err, { duration: 5000, dismissible: true });
+            setError(data?.err);
+          }
 
-        if (data?.success) {
-          toast.success(data?.success, { duration: 5000, dismissible: true });
-        }
-      });
+          if (data?.success) {
+            toast.success(data?.success, { duration: 5000, dismissible: true });
+            setSuccess(data?.success);
+          }
+
+          if (data?.twoFactor) {
+            setShowTwoFactor(true);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setError("An error occurred. Please try again later.");
+        });
     });
   };
 
@@ -92,40 +112,62 @@ const LoginForm = () => {
               onSubmit={form.handleSubmit(onFormSubmit)}
             >
               <div className="space-y-4">
-                <FormField
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
-                          {...field}
-                          placeholder="Email Address"
-                          type="email"
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
-                          {...field}
-                          placeholder="Password"
-                          type="password"
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {showTwoFactor && (
+                  <FormField
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Two Factor Code</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={isPending}
+                            {...field}
+                            placeholder="123456"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {!showTwoFactor && (
+                  <>
+                    <FormField
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
+                              {...field}
+                              placeholder="Email Address"
+                              type="email"
+                              disabled={isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2 focus:border-transparent"
+                              {...field}
+                              placeholder="Password"
+                              type="password"
+                              disabled={isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
               </div>
               <div className="flex items-center justify-center">
                 <ReCAPTCHA
@@ -139,7 +181,11 @@ const LoginForm = () => {
                 className="w-full rounded-full"
                 type="submit"
               >
-                {isPending ? <PulseLoader color="white" size="5px" /> : "Login"}
+                {isPending ? (
+                  <PulseLoader color="white" size="5px" />
+                ) : (
+                  <>{showTwoFactor ? "Confirm" : "Login"}</>
+                )}
               </Button>
             </form>
             <Button
