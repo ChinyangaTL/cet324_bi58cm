@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./lib/db";
 import { getUserById } from "./lib/user";
 import { getTwoFactorConfirmationByUserId } from "./lib/two-factor-confirmation";
+import { getAccountByUserId } from "./lib/account";
 
 export const {
   auth,
@@ -50,21 +51,29 @@ export const {
 
       return true;
     },
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+
+      if (session.user) {
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.isOAuth = token.isOAuth as boolean;
+      }
+
+      return session;
+    },
     async jwt({ token }) {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
 
       if (!existingUser) return token;
+      const existingAccount = await getAccountByUserId(existingUser.id);
 
+      token.isOAuth = !!existingAccount;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       return token;
-    },
-    async session({ token, session }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
-
-      return session;
     },
   },
   adapter: PrismaAdapter(db),
