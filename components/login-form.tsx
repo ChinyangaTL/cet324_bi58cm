@@ -18,11 +18,14 @@ import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
 import OauthButtons from "./oauth-buttons";
 import { useSearchParams } from "next/navigation";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
@@ -124,8 +127,15 @@ const LoginForm = () => {
                   )}
                 />
               </div>
+              <div className="flex items-center justify-center">
+                <ReCAPTCHA
+                  sitekey="6LfpLu0pAAAAAA9ocEVLlNb0MrMJY_EeGRnGH305"
+                  onChange={(value) => setRecaptchaValue(value)}
+                />
+              </div>
+
               <Button
-                disabled={isPending}
+                disabled={recaptchaValue === null || isPending}
                 className="w-full rounded-full"
                 type="submit"
               >
@@ -145,7 +155,12 @@ const LoginForm = () => {
           </p>
         </div>
 
-        {<OauthButtons isPending={isPending} />}
+        {
+          <OauthButtons
+            isPending={isPending}
+            recaptchaValidated={recaptchaValue}
+          />
+        }
       </CardContent>
     </Card>
   );

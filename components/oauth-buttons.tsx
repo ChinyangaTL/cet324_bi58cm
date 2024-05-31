@@ -6,7 +6,13 @@ import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
-const OauthButtons = ({ isPending }: { isPending: boolean }) => {
+const OauthButtons = ({
+  isPending,
+  recaptchaValidated,
+}: {
+  isPending: boolean;
+  recaptchaValidated: string | null;
+}) => {
   const onClick = (provider: "google" | "github") => {
     signIn(provider, { callbackUrl: DEFAULT_LOGIN_REDIRECT });
   };
@@ -16,7 +22,7 @@ const OauthButtons = ({ isPending }: { isPending: boolean }) => {
       <Button
         className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
         variant="outline"
-        disabled={isPending}
+        disabled={recaptchaValidated === null || isPending}
         onClick={() => onClick("google")}
       >
         <FcGoogle className="w-5 h-5" />
@@ -25,7 +31,7 @@ const OauthButtons = ({ isPending }: { isPending: boolean }) => {
       <Button
         className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
         variant="outline"
-        disabled={isPending}
+        disabled={recaptchaValidated === null || isPending}
         onClick={() => onClick("github")}
       >
         <FaGithub className="w-5 h-5" />
