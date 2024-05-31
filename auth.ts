@@ -25,6 +25,15 @@ export const {
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== "credentials") return true; // allow oauth wihtout email verification
+
+      const existingUser = await getUserById(user.id!); // block sign in without email verifcation
+
+      if (!existingUser?.emailVerified) return false;
+
+      return true;
+    },
     async jwt({ token }) {
       if (!token.sub) return token;
 
