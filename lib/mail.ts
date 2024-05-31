@@ -5,8 +5,8 @@ import { getUserByEmail } from "./user";
 import PasswordResetEmail from "@/emails/reset-password";
 import TwoFactorEmail from "@/emails/two-factor";
 
-// const domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const domain = "http://localhost:3000";
+const domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+// const domain = "http://localhost:3000";
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
