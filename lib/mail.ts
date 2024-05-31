@@ -2,6 +2,7 @@ import { VerifyEmail } from "@/emails/verify-email";
 
 import { render } from "@react-email/render";
 import { getUserByEmail } from "./user";
+import PasswordResetEmail from "@/emails/reset-password";
 
 const domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const sgMail = require("@sendgrid/mail");
@@ -33,6 +34,36 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     html: verificationEmailHtml,
     trackingSettings,
   };
+  await sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error: any) => {
+      console.error(error);
+    });
+};
+
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+  const user = await getUserByEmail(email);
+  const resetLink = `${domain}/auth/reset-password?token=${token}`;
+
+  const resetPasswordEmailHtml = render(
+    PasswordResetEmail({
+      resetPasswordLink: resetLink,
+      userFirstname: user?.name!,
+    })
+  );
+
+  const msg = {
+    to: email,
+    from: "les.chinyanga@gmail.com",
+    subject: "Reset Your Password",
+    text: `${user?.name}, reset your password by clicking the link below: ${resetLink}`,
+    html: resetPasswordEmailHtml,
+    trackingSettings,
+  };
+
   await sgMail
     .send(msg)
     .then(() => {
