@@ -11,7 +11,7 @@ const OauthButtons = ({
   recaptchaValidated,
 }: {
   isPending: boolean;
-  recaptchaValidated: string | null;
+  recaptchaValidated?: string | null;
 }) => {
   const onClick = (provider: "google" | "github") => {
     signIn(provider, { callbackUrl: DEFAULT_LOGIN_REDIRECT });
