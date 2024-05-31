@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { getUserByEmail } from "@/lib/user";
 import { generateVerficationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import { isCommonPassword } from "@/lib/is-common-password";
 
 export const register = async (values: z.infer<typeof RegisterFormSchema>) => {
   const validatedFields = RegisterFormSchema.safeParse(values);
@@ -15,6 +16,11 @@ export const register = async (values: z.infer<typeof RegisterFormSchema>) => {
   }
 
   const { email, password } = validatedFields.data;
+
+  if (isCommonPassword(password)) {
+    return { err: "Password is too common" };
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const existingUser = await getUserByEmail(email);
