@@ -164,3 +164,7 @@ export const NewPasswordFormSchema = z
       });
     }
   });
+
+export const TwoFAFromSchema = z.object({
+  isTwoFactorEnabled: z.optional(z.boolean()),
+});
