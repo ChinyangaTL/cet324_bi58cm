@@ -10,7 +10,7 @@ import LogoutButton from "@/components/logout-button";
 const HomePage = async () => {
   const session = await auth();
   return (
-    <div>
+    <div className="w-full h-full flex flex-col items-center justify-center">
       {JSON.stringify(session)}
       <LogoutButton />
     </div>
