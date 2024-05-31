@@ -17,11 +17,17 @@ import { FormError } from "./form-error";
 import { toast } from "sonner";
 import PulseLoader from "react-spinners/PulseLoader";
 import OauthButtons from "./oauth-buttons";
+import { useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different provider"
+      : "";
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -74,7 +80,7 @@ const LoginForm = () => {
           </div>
         </div>
         <FormSuccess message={success} />
-        <FormError message={error} />
+        <FormError message={error || urlError} />
 
         <div className="mb-6 flex flex-col">
           <Form {...form}>

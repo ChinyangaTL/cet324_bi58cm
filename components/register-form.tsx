@@ -20,12 +20,18 @@ import { FormSuccess } from "./form-success";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 import OauthButtons from "./oauth-buttons";
+import { useSearchParams } from "next/navigation";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different provider"
+      : "";
 
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
@@ -79,7 +85,7 @@ const RegisterForm = () => {
           </p>
         </div>
         <FormSuccess message={success} />
-        <FormError message={error} />
+        <FormError message={error || urlError} />
         <OauthButtons isPending={isPending} />
         <div className="flex relative my-6">
           <Separator className="border-t flex-1 border-grey-dark absolute left-0 right-0 top-1/2" />
