@@ -19,13 +19,14 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { NewPasswordFormSchema } from "@/form-schemas";
 import { Eye, EyeOff } from "lucide-react";
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { newPassword } from "@/server-actions/new-password";
 import PulseLoader from "react-spinners/PulseLoader";
+import Link from "next/link";
 
 export const NewPasswordForm = () => {
   const searchParams = useSearchParams();
@@ -144,7 +145,15 @@ export const NewPasswordForm = () => {
       <CardFooter className="flex flex-col items-center gap-y-2">
         <div>
           <Button onClick={() => router.push("/")} variant={"link"} size={"sm"}>
-            Back to login
+            <Link
+              href="/auth/login"
+              className={buttonVariants({
+                variant: "link",
+                className: "px-0 mx-0",
+              })}
+            >
+              <p className="text-sm font-semibold">Back to log in</p>
+            </Link>
           </Button>
         </div>
       </CardFooter>
