@@ -1,9 +1,12 @@
 import LoginForm from "@/components/login-form";
+import { Suspense } from "react";
 
 const LoginPage = () => {
   return (
     <div className="flex items-center justify-center h-full">
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 };

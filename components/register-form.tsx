@@ -5,12 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
-import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaGithub,
-  FaGoogle,
-} from "react-icons/fa";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { RegisterFormSchema } from "@/form-schemas";
@@ -24,12 +19,19 @@ import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
+import OauthButtons from "./oauth-buttons";
+import { useSearchParams } from "next/navigation";
 
 const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different provider"
+      : "";
 
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
@@ -83,25 +85,8 @@ const RegisterForm = () => {
           </p>
         </div>
         <FormSuccess message={success} />
-        <FormError message={error} />
-        <div className="flex flex-col gap-3">
-          <Button
-            className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
-            variant="outline"
-            disabled={isPending}
-          >
-            <FaGoogle />
-            <p>Sign in with google</p>
-          </Button>
-          <Button
-            className="w-full rounded-full flex items-center justify-center gap-2 transition-all duration-200 ease-in-out  hover:ring-2 hover:ring-primary hover:border-transparent"
-            variant="outline"
-            disabled={isPending}
-          >
-            <FaGithub />
-            <p>Sign in with github</p>
-          </Button>
-        </div>
+        <FormError message={error || urlError} />
+        <OauthButtons isPending={isPending} />
         <div className="flex relative my-6">
           <Separator className="border-t flex-1 border-grey-dark absolute left-0 right-0 top-1/2" />
 
