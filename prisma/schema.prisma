@@ -45,3 +45,12 @@ model Account {
 
   @@id([provider, providerAccountId])
 }
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  email     String
+  
+  @@unique([email, token])
+}
