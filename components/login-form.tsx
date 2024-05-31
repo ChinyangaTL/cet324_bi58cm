@@ -71,7 +71,7 @@ const LoginForm = () => {
             <p className="text-sm">Do not have an account?</p>
             <Button className="text-sm  text-primary" variant="link">
               <Link
-                href="/auth/login"
+                href="/auth/register"
                 className={buttonVariants({
                   variant: "link",
                   className: "px-0 mx-0",
