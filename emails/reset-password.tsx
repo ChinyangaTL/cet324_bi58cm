@@ -22,7 +22,7 @@ export const PasswordResetEmail = ({
   return (
     <Html>
       <Head />
-      <Preview>Atomica Store reset your password</Preview>
+      <Preview>Cyber Locket Store reset your password</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -34,7 +34,7 @@ export const PasswordResetEmail = ({
           <Section>
             <Text style={text}>Hi {userFirstname},</Text>
             <Text style={text}>
-              Someone recently requested a password change for your Atomica
+              Someone recently requested a password change for your Cyber Locket
               account. If this was you, you can set a new password here:
             </Text>
             <Button style={button} href={resetPasswordLink}>

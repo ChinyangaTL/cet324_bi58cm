@@ -27,6 +27,8 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { ResetPasswordFormSchema } from "@/form-schemas";
+import { resetPassword } from "@/server-actions/reset-password";
+import PulseLoader from "react-spinners/PulseLoader";
 
 export const ResetPasswordForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -44,13 +46,13 @@ export const ResetPasswordForm = () => {
   const onFormSubmit = (values: z.infer<typeof ResetPasswordFormSchema>) => {
     setError("");
     setSuccess("");
-    console.log(values);
-    // startTransition(() => {
-    //   resetPassword(values).then((data) => {
-    //     setError(data?.err);
-    //     setSuccess(data?.success);
-    //   });
-    // });
+
+    startTransition(() => {
+      resetPassword(values).then((data) => {
+        setError(data?.err);
+        setSuccess(data?.success);
+      });
+    });
   };
 
   return (
@@ -77,6 +79,7 @@ export const ResetPasswordForm = () => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        className="w-full outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:ring-2  focus:border-transparent"
                         {...field}
                         placeholder="email@example.com"
                         type="email"
@@ -89,7 +92,11 @@ export const ResetPasswordForm = () => {
               />
             </div>
             <Button className="w-full" type="submit" disabled={isPending}>
-              Send reset email
+              {isPending ? (
+                <PulseLoader color="white" size="5px" />
+              ) : (
+                "Send reset email"
+              )}
             </Button>
           </form>
         </Form>
