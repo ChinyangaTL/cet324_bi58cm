@@ -142,8 +142,13 @@ const LoginForm = () => {
                 {isPending ? <PulseLoader color="white" size="5px" /> : "Login"}
               </Button>
             </form>
-            <Button disabled={isPending} variant="link" className="self-center">
-              Forgot your password?
+            <Button
+              asChild
+              disabled={isPending}
+              variant="link"
+              className="self-center"
+            >
+              <Link href="/auth/forgot-password">Forgot Password?</Link>
             </Button>
           </Form>
         </div>
